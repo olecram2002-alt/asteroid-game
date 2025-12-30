@@ -5,7 +5,7 @@ class Planet(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
         self.pos = pygame.math.Vector2(width/2, height/2)
-        self.mass = 400000 #kg
+        self.mass = 4000 #kg
         
         #planet
         raw_planet_image = pygame.image.load('sprites/planet.png').convert_alpha()

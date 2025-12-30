@@ -16,6 +16,10 @@ class Game:
         #game variables
         self.running = True
 
+        #events
+        self.asteroid_spawn = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.asteroid_spawn, spawn_time)
+
     def run(self):
         while self.running:
             for event in pygame.event.get():
@@ -23,6 +27,10 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+
+                if event.type == self.asteroid_spawn:
+                    self.manager.generate_celestial_body()
+                    print('created')
 
             self.update()
             self.draw()

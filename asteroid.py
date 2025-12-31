@@ -23,47 +23,41 @@ class Celestial_body(pygame.sprite.Sprite):
         self.image = self.original_image
         self.rect = self.image.get_rect(center = self.position)
 
+        #sounds
+        self.explode_sound = pygame.mixer.Sound('sounds/explotions/sfx_exp_short_hard2.wav')
+        self.explode_sound.set_volume(efex_volume)
+
+
     def calculate_position0(self)->tuple:
         x,y = width/2, height/2
         screen_radius = math.sqrt(width**2 + height**2)/2 
         angle = math.radians(randint(0,360))
 
         position = (x + screen_radius*math.cos(angle), y + screen_radius*math.sin(angle))
-
         return position
     
+    
     def calculate_velocity0(self, position:tuple)->tuple:
-        #fix velocity direction
-        x,y = position
-        index = randint(0,1)
-        velocity_magnitude = randint(4,6)
+        magnitud = randint(4,6)
+        if randint(0,1): sign = -1
+        else: sign = 1
 
-        if x > 0 and y > 0 :
-            if index: velocity = (0,-1*velocity_magnitude)
-            else: velocity = (-1*velocity_magnitude,0)
-        
-        elif x > 0 and y < 0 :
-            if index: velocity = (0,1*velocity_magnitude)
-            else: velocity = (-1*velocity_magnitude,0)
+        origin = pygame.math.Vector2(width/2, height/2)
 
-        elif x < 0 and y < 0 :
-            if index: velocity = (0,1*velocity_magnitude)
-            else: velocity = (1*velocity_magnitude,0)
+        direction_center = (origin - position).normalize()
+        direction = direction_center.rotate(sign*randint(25,45))
 
-        elif x < 0 and y > 0:
-            if index: velocity = (0,-1*velocity_magnitude)
-            else: velocity = (1*velocity_magnitude,0)
-
-        else: velocity = (0,0)
-
+        velocity = direction * magnitud
         return velocity
-
+    
 
     def load_assets(self):
         raise NotImplementedError('Subclass has to implement this method')
+    
 
     def update(self):
         self.move()
+
 
     def move(self):
         force = pygame.math.Vector2(0,0)
@@ -85,14 +79,18 @@ class Celestial_body(pygame.sprite.Sprite):
 
         self.acc *= 0
 
+
     def explode(self):
         #animation code for explotion in the future
-        pass
+        self.explode_sound.play()
+        
+
 
 class Asteroid(Celestial_body):
     def __init__(self, type_:str, *groups):
         self.type = type_
         super().__init__(*groups)
+
 
     def load_assets(self)->pygame.Surface:
         index = randint(1,3)

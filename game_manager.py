@@ -8,6 +8,8 @@ def center_collision(sprite_a, sprite_b):
         return True
     else: 
         return False
+    
+
 
 class Manager:
     def __init__(self):
@@ -30,14 +32,18 @@ class Manager:
         self.player = Player((600,380), self.bullet_sprites, self.visible_sprites)
         self.planet = Planet(self.visible_sprites, self.asteroids)
 
+
     def generate_celestial_body(self):
         Asteroid('a-medium',self.visible_sprites, self.collide_sprites, self.asteroids)
+        print('created')
+
 
     def collision_planet_check(self):
         for sprite in self.collide_sprites:
             if self.planet.position.distance_squared_to(sprite.position) < 170**2: #165 is half of the lenght of the planet sprite
-                sprite.kill()
                 sprite.explode()
+                sprite.kill()
+
     
     def collision_bullet_check(self):
         pygame.sprite.groupcollide(self.bullet_sprites, self.collide_sprites, True, True, 

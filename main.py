@@ -6,9 +6,13 @@ class Game:
 
         #esentials
         pygame.init()
+        pygame.mixer.init()
         self.screen = pygame.display.set_mode((width,height))
         pygame.display.set_caption('Asteroids')
         self.clock = pygame.time.Clock()
+        pygame.mixer.music.load('sounds/music/Cranky-2D-Creatures.ogg')
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(music_volume)
 
         #game manager
         self.manager = Manager()
@@ -18,7 +22,8 @@ class Game:
 
         #events
         self.asteroid_spawn = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.asteroid_spawn, spawn_time)
+        pygame.time.set_timer(self.asteroid_spawn, asteroid_spawn_time)
+
 
     def run(self):
         while self.running:
@@ -37,6 +42,7 @@ class Game:
             pygame.display.update()
             self.clock.tick(fps)
 
+
     def update(self):
         self.manager.planet.update()
         self.manager.player.update()
@@ -48,6 +54,7 @@ class Game:
             sprite.update()
         self.manager.collision_bullet_check()
         self.manager.collision_planet_check()
+
 
     def draw(self):
         self.screen.fill('black')

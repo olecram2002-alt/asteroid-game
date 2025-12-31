@@ -19,6 +19,8 @@ class Player(pygame.sprite.Sprite):
 
         #shooting
         self.time_last_trigger = 0
+        self.shoot_sound = pygame.mixer.Sound('sounds/weapons/sfx_wpn_laser8.wav')
+        self.shoot_sound.set_volume(efex_volume)
 
 
     def input(self):
@@ -48,6 +50,7 @@ class Player(pygame.sprite.Sprite):
         self.image = ship
         self.rect = self.image.get_rect(center = self.position)
 
+
     def shoot(self):
         current_time = pygame.time.get_ticks()
         for group in self.groups():
@@ -56,11 +59,14 @@ class Player(pygame.sprite.Sprite):
 
         if current_time - self.time_last_trigger >= self.shotting_speed:
             Ammo(self.degree_angle, self.rect.center, self.bullet_sprites, visible_sprites)
-
+            self.shoot_sound.play()
             self.time_last_trigger = current_time
+        
     
+
     def update(self):
         self.move()
+
 
 
 class Ammo(pygame.sprite.Sprite):
@@ -79,9 +85,11 @@ class Ammo(pygame.sprite.Sprite):
 
         self.velocity = self.direction*10
 
+
     def move(self):
         self.position += self.velocity
         self.rect.center =self.position
+
 
     def update(self):
         self.move()

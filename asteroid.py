@@ -97,6 +97,7 @@ class Asteroid(Celestial_body):
         #load images
         match self.type:
             case 'a-small':
+                raw_image = pygame.image.load(f'sprites/small_sz_asteroid-{index}.png')
                 self.mass = 200
 
             case 'a-medium':
@@ -104,6 +105,7 @@ class Asteroid(Celestial_body):
                 self.mass = 400
 
             case 'a-large':
+                raw_image = pygame.image.load(f'sprites/large_sz_asteroid-{index}.png')
                 self.mass = 600
         
         return raw_image

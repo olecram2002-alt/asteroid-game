@@ -7,7 +7,7 @@ class Celestial_body(pygame.sprite.Sprite):
         super().__init__(*groups)
         position = self.calculate_position0()
         velocity = self.calculate_velocity0(position)
-        self.pos = pygame.math.Vector2(position)
+        self.position = pygame.math.Vector2(position)
         self.vel = pygame.math.Vector2(velocity)
         self.acc = pygame.math.Vector2(0,0)
 
@@ -21,7 +21,7 @@ class Celestial_body(pygame.sprite.Sprite):
         raw_image = self.load_assets()
         self.original_image = pygame.transform.scale_by(raw_image, scale_factor)
         self.image = self.original_image
-        self.rect = self.image.get_rect(center = self.pos)
+        self.rect = self.image.get_rect(center = self.position)
 
     def calculate_position0(self)->tuple:
         x,y = width/2, height/2
@@ -33,6 +33,7 @@ class Celestial_body(pygame.sprite.Sprite):
         return position
     
     def calculate_velocity0(self, position:tuple)->tuple:
+        #fix velocity direction
         x,y = position
         index = randint(0,1)
         velocity_magnitude = randint(4,6)
@@ -70,17 +71,17 @@ class Celestial_body(pygame.sprite.Sprite):
         for sprite in self.asteroids_group:
             if sprite is self:
                 continue
-            force_d:pygame.math.Vector2 = sprite.pos - self.pos
-            force_m = (G * self.mass*sprite.mass)/self.pos.distance_squared_to(sprite.pos)
+            force_d:pygame.math.Vector2 = sprite.position - self.position
+            force_m = (G * self.mass*sprite.mass)/self.position.distance_squared_to(sprite.position)
             force_d.scale_to_length(force_m)
 
             force += force_d
 
         self.acc = force/self.mass
         self.vel += self.acc
-        self.pos += self.vel
+        self.position += self.vel
 
-        self.rect.center = self.pos
+        self.rect.center = self.position
 
         self.acc *= 0
 

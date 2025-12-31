@@ -38,15 +38,15 @@ class Player(pygame.sprite.Sprite):
         self.input()
 
         x,y = width/2, height/2
-        radius = 220
+        radius = 200 
         self.degree_angle = -90 - math.degrees(self.angle) #angle to rotate the sprite
 
-        self.new_position = (x + radius*math.cos(self.angle), y + radius*math.sin(self.angle))
+        self.position = (x + radius*math.cos(self.angle), (y + radius*math.sin(self.angle)))
 
         ship = pygame.transform.rotate(self.original_image, self.degree_angle)
 
         self.image = ship
-        self.rect.center = self.new_position
+        self.rect = self.image.get_rect(center = self.position)
 
     def shoot(self):
         current_time = pygame.time.get_ticks()
@@ -68,14 +68,29 @@ class Ammo(pygame.sprite.Sprite):
         super().__init__(*groups)
 
         rad_angle = math.radians(angle+90)
-        direction = pygame.math.Vector2(math.cos(rad_angle), -math.sin(rad_angle))
+        self.direction = pygame.math.Vector2(math.cos(rad_angle), -math.sin(rad_angle))
 
-        position_vector = direction*64 + position #32 is half the lenght of the bullet sprite
+        self.position = self.direction*64 + position #32 is half the lenght of the bullet sprite
         
         raw_image = pygame.image.load('sprites/basic_ammo.png')
         self.original_image = pygame.transform.scale_by(raw_image,scale_factor)
         self.image = pygame.transform.rotate(self.original_image, angle)
-        self.rect = self.image.get_rect(center = position_vector)
+        self.rect = self.image.get_rect(center = self.position)
+
+        self.velocity = self.direction*10
+
+    def move(self):
+        self.position += self.velocity
+        self.rect.center =self.position
+
+    def update(self):
+        self.move()
+        if self.position.distance_squared_to((width/2, height/2)) >= 900**2:
+            self.kill()
+
+
+
+
 
         
 

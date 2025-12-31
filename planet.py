@@ -4,7 +4,7 @@ from settings import *
 class Planet(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
-        self.pos = pygame.math.Vector2(width/2, height/2)
+        self.position = pygame.math.Vector2(width/2, height/2)
         self.mass = 4000 #kg
         
         #planet
@@ -23,7 +23,7 @@ class Planet(pygame.sprite.Sprite):
         self.image.blit(self.original_p_image,(0,0))
         self.image.blit(self.original_c_image,(0,0))
 
-        self.rect = self.image.get_rect(center = self.pos)
+        self.rect = self.image.get_rect(center = self.position)
 
 
     def update(self):
@@ -44,5 +44,5 @@ class Planet(pygame.sprite.Sprite):
         self.image.blit(planet, rect_p.topleft)
         self.image.blit(clouds, rect_c)
 
-        self.rect = self.image.get_rect(center = self.pos)
+        self.rect = self.image.get_rect(center = self.position)
 

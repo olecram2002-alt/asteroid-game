@@ -30,7 +30,6 @@ class Game:
 
                 if event.type == self.asteroid_spawn:
                     self.manager.generate_celestial_body()
-                    print('created')
 
             self.update()
             self.draw()
@@ -45,6 +44,9 @@ class Game:
             if sprite is self.manager.planet:
                 continue
             sprite.update()
+        for sprite in self.manager.bullet_sprites:
+            sprite.update()
+        self.manager.collision_bullet_check()
         self.manager.collision_planet_check()
 
     def draw(self):

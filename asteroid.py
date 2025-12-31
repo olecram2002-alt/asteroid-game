@@ -35,23 +35,25 @@ class Celestial_body(pygame.sprite.Sprite):
     def calculate_velocity0(self, position:tuple)->tuple:
         x,y = position
         index = randint(0,1)
-        velocity_magnitud = randint(0,4)
+        velocity_magnitude = randint(4,6)
 
         if x > 0 and y > 0 :
-            if index: velocity = (0,-1*velocity_magnitud)
-            else: velocity = (-1*velocity_magnitud,0)
+            if index: velocity = (0,-1*velocity_magnitude)
+            else: velocity = (-1*velocity_magnitude,0)
         
         elif x > 0 and y < 0 :
-            if index: velocity = (0,1*velocity_magnitud)
-            else: velocity = (-1*velocity_magnitud,0)
+            if index: velocity = (0,1*velocity_magnitude)
+            else: velocity = (-1*velocity_magnitude,0)
 
         elif x < 0 and y < 0 :
-            if index: velocity = (0,1*velocity_magnitud)
-            else: velocity = (1*velocity_magnitud,0)
+            if index: velocity = (0,1*velocity_magnitude)
+            else: velocity = (1*velocity_magnitude,0)
 
         elif x < 0 and y > 0:
-            if index: velocity = (0,-1*velocity_magnitud)
-            else: velocity = (1*velocity_magnitud,0)
+            if index: velocity = (0,-1*velocity_magnitude)
+            else: velocity = (1*velocity_magnitude,0)
+
+        else: velocity = (0,0)
 
         return velocity
 
@@ -69,7 +71,6 @@ class Celestial_body(pygame.sprite.Sprite):
             if sprite is self:
                 continue
             force_d:pygame.math.Vector2 = sprite.pos - self.pos
-            force_d.normalize()
             force_m = (G * self.mass*sprite.mass)/self.pos.distance_squared_to(sprite.pos)
             force_d.scale_to_length(force_m)
 
@@ -83,6 +84,9 @@ class Celestial_body(pygame.sprite.Sprite):
 
         self.acc *= 0
 
+    def explode(self):
+        #animation code for explotion in the future
+        pass
 
 class Asteroid(Celestial_body):
     def __init__(self, type_:str, *groups):

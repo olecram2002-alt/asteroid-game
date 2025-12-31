@@ -45,6 +45,7 @@ class Game:
             if sprite is self.manager.planet:
                 continue
             sprite.update()
+        self.manager.collision_planet_check()
 
     def draw(self):
         self.screen.fill('black')

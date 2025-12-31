@@ -5,7 +5,12 @@ from asteroid import Asteroid
 from random import randint
 
 def center_collision(sprite_a, sprite_b):
-    if sprite_a.position.distance_squared_to(sprite_b.position) <= 30**2:
+    match sprite_b.type:
+        case 'a-small': distance = 10**2
+        case 'a-medium' : distance = 30**2
+        case 'a-large' : distance = 50**2
+        
+    if sprite_a.position.distance_squared_to(sprite_b.position) <= distance:
         return True
     else: 
         return False
@@ -36,7 +41,9 @@ class Manager:
 
     def generate_celestial_body(self):
         odds = randint(1,10)
-        if 1 <= odds <= 7:
+        if odds == 1:
+            type_ = 'a-small'
+        elif 1 < odds <= 7:
             type_ = 'a-medium'
         elif 7 < odds <= 10:
             type_ = 'a-large'
@@ -54,12 +61,20 @@ class Manager:
                 case 'a-large' : radius = 220**2
 
             if self.planet.position.distance_squared_to(sprite.position) < radius: 
-                sprite.explode()
-                sprite.kill()
+                sprite.explode('planet')
 
     
     def collision_bullet_check(self):
-        pygame.sprite.groupcollide(self.bullet_sprites, self.collide_sprites, True, True, 
-                                   collided= center_collision)
+        collisions = pygame.sprite.groupcollide(self.bullet_sprites, self.collide_sprites, True, False, 
+                                                collided= center_collision)
+        
+        for bullet in collisions:
+            hit_bodies = collisions[bullet]
+
+            for bodie in hit_bodies:
+                bodie.life -= self.player.damage
+                bodie.small_explode_sound.play()
+                if bodie.life <= 0 :
+                    bodie.explode('bullet')
 
             

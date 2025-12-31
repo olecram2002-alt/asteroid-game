@@ -16,11 +16,12 @@ class Player(pygame.sprite.Sprite):
         #attributes
         self.speed = 2
         self.shotting_speed = 100
+        self.damage = 10
 
         #shooting
         self.time_last_trigger = 0
         self.shoot_sound = pygame.mixer.Sound('sounds/weapons/sfx_wpn_laser8.wav')
-        self.shoot_sound.set_volume(efex_volume)
+        self.shoot_sound.set_volume(efex_volume - 0.2)
 
 
     def input(self):

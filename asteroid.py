@@ -8,8 +8,8 @@ class Celestial_body(pygame.sprite.Sprite):
         position = self.calculate_position0()
         velocity = self.calculate_velocity0(position)
         self.position = pygame.math.Vector2(position)
-        self.vel = pygame.math.Vector2(velocity)
-        self.acc = pygame.math.Vector2(0,0)
+        self.velocity = pygame.math.Vector2(velocity)
+        self.acceleration = pygame.math.Vector2(0,0)
 
         for group in self.groups():
             if group.name == 'asteroids':
@@ -26,6 +26,8 @@ class Celestial_body(pygame.sprite.Sprite):
         #sounds
         self.explode_sound = pygame.mixer.Sound('sounds/explotions/sfx_exp_short_hard2.wav')
         self.explode_sound.set_volume(efex_volume)
+        self.small_explode_sound = pygame.mixer.Sound('sounds/explotions/sfx_exp_shortest_soft2.wav')
+        self.small_explode_sound.set_volume(efex_volume)
 
 
     def calculate_position0(self)->tuple:
@@ -45,7 +47,7 @@ class Celestial_body(pygame.sprite.Sprite):
         origin = pygame.math.Vector2(width/2, height/2)
 
         direction_center = (origin - position).normalize()
-        direction = direction_center.rotate(sign*randint(25,45))
+        direction = direction_center.rotate(sign*randint(30,45))
 
         velocity = direction * magnitud
         return velocity
@@ -71,18 +73,19 @@ class Celestial_body(pygame.sprite.Sprite):
 
             force += force_d
 
-        self.acc = force/self.mass
-        self.vel += self.acc
-        self.position += self.vel
+        self.acceleration = force/self.mass
+        self.velocity += self.acceleration
+        self.position += self.velocity
 
         self.rect.center = self.position
 
-        self.acc *= 0
+        self.acceleration *= 0
 
 
-    def explode(self):
+    def explode(self, type_:str):
         #animation code for explotion in the future
         self.explode_sound.play()
+        self.kill()
         
 
 
@@ -98,16 +101,18 @@ class Asteroid(Celestial_body):
         match self.type:
             case 'a-small':
                 raw_image = pygame.image.load(f'sprites/small_sz_asteroid-{index}.png')
-                self.mass = 200
+                self.mass = 100
+                self.life = 10
 
             case 'a-medium':
                 raw_image = pygame.image.load(f'sprites/medium_sz_asteroid-{index}.png')
-                self.mass = 400
+                self.mass = 500
+                self.life = 30
 
             case 'a-large':
                 raw_image = pygame.image.load(f'sprites/large_sz_asteroid-{index}.png')
-                self.mass = 600
-        
+                self.mass = 1000
+                self.life = 50
         return raw_image
 
 

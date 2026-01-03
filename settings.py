@@ -17,7 +17,5 @@ efex_volume = 0.3
 music_volume = 0.1
 
 #implement life in the planet
-#implement collsions
 #implement particles
 #implement a score system
-#make a dict with all the atributs for each respective type of celestial body so is easire to acces to it

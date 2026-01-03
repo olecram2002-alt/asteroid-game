@@ -18,18 +18,20 @@ class Celestial_body(pygame.sprite.Sprite):
                 self.collide_group = group
 
         #sprite atributes
-        raw_image = self.load_assets()
-        self.original_image = pygame.transform.scale_by(raw_image, scale_factor)
-        self.image = self.original_image
-        self.rect = self.image.get_rect(center = self.position)
-        self.radius = self.rect.width/2 - 5 # -10 is just a correction so they overlap for a little bit
-        self.mass, self.life = asteroid_atributes[self.type]
+        self.setup_visuals()
 
         #sounds
         self.explode_sound = pygame.mixer.Sound('sounds/explotions/sfx_exp_short_hard2.wav')
         self.explode_sound.set_volume(efex_volume)
         self.small_explode_sound = pygame.mixer.Sound('sounds/explotions/sfx_exp_shortest_soft2.wav')
         self.small_explode_sound.set_volume(efex_volume)
+
+        #distance check for sounds
+        center = pygame.math.Vector2(width/2, height/2)
+        if self.position.distance_squared_to(center) <= (width**2 + height**2)/4:
+            self.inrange = True
+
+        else: self.inrange = False
 
 
     def calculate_position0(self)->tuple:
@@ -52,6 +54,15 @@ class Celestial_body(pygame.sprite.Sprite):
 
         velocity = direction * speed_magnitud
         return velocity
+    
+
+    def setup_visuals(self):
+        raw_image = self.load_assets()
+        self.original_image = pygame.transform.scale_by(raw_image, scale_factor)
+        self.image = self.original_image
+        self.rect = self.image.get_rect(center = self.position)
+        self.radius = self.rect.width/2 - 5 # -10 is just a correction so they overlap for a little bit
+        self.mass, self.life = asteroid_atributes[self.type]
     
 
     def load_assets(self):
@@ -106,14 +117,15 @@ class Celestial_body(pygame.sprite.Sprite):
         #create new asteroid
         hit_sprite.explode('asteroid')
         self.type = new_type
-        self.load_assets()
+        self.setup_visuals()
         self.position = new_position
         self.velocity = new_velocity
+        self.rect.center = self.position
 
         
     def explode(self, type_:str):
         #animation code for explotion in the future
-        self.explode_sound.play()
+        if self.inrange: self.explode_sound.play()
         self.kill()
 
 

@@ -71,18 +71,23 @@ class Manager:
                 
 
     def collision_asteroid_check(self):
-        self.asteroids.remove(self.planet)
-        for sprite in self.asteroids:
+        asteroid_list = [s for s in self.asteroids if s is not self.planet]
+        handled = set()
+
+        for sprite in asteroid_list:
+            if sprite is handled or not sprite.alive():
+                continue
+
             self.asteroids.remove(sprite)
 
             collisions = pygame.sprite.spritecollide(sprite, self.asteroids, False, 
-                                                     collided= lambda a,b: center_collision(a, b, 'asteroid'))
+                                    collided= lambda a,b: center_collision(a, b, 'asteroid') if b is not self.planet else False)
             
             for hit in collisions:
-                sprite.inelastic_collision(hit)
+                if hit not in handled and hit.alive():
+                    sprite.inelastic_collision(hit)
+                    handled.add(hit)
+                    break
 
             self.asteroids.add(sprite)
-
-        self.asteroids.add(self.planet)
-
             

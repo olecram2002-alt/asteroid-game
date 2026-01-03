@@ -47,7 +47,7 @@ class Celestial_body(pygame.sprite.Sprite):
         origin = pygame.math.Vector2(width/2, height/2)
 
         direction_center = (origin - position).normalize()
-        direction = direction_center.rotate(sign*randint(30,45))
+        direction = direction_center.rotate(sign*randint(25,40))
 
         velocity = direction * magnitud
         return velocity
@@ -86,6 +86,14 @@ class Celestial_body(pygame.sprite.Sprite):
         #animation code for explotion in the future
         self.explode_sound.play()
         self.kill()
+
+
+    def get_hit(self, player):
+        self.life -= player.damage
+        self.small_explode_sound.play()
+
+        if self.life <= 0:
+            self.explode('bullet')
         
 
 
@@ -93,6 +101,8 @@ class Asteroid(Celestial_body):
     def __init__(self, type_:str, *groups):
         self.type = type_
         super().__init__(*groups)
+
+        self.radius = self.rect.width/2 - 5 # -10 is just a correction so they overlap for a little bit
 
 
     def load_assets(self)->pygame.Surface:

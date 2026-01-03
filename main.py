@@ -7,7 +7,17 @@ class Game:
         #esentials
         pygame.init()
         pygame.mixer.init()
-        self.screen = pygame.display.set_mode((width,height))
+
+        info = pygame.display.Info()
+        screen_width = info.current_w
+        screen_height = info.current_h
+
+        if screen_width < width or screen_height < height:
+            flags = pygame.FULLSCREEN | pygame.SCALED
+        else: 
+            flags = 0
+        
+        self.screen = pygame.display.set_mode((width,height), flags)
         pygame.display.set_caption('Asteroids')
         self.clock = pygame.time.Clock()
         pygame.mixer.music.load('sounds/music/Cranky-2D-Creatures.ogg')
@@ -35,6 +45,11 @@ class Game:
 
                 if event.type == self.asteroid_spawn:
                     self.manager.generate_celestial_body()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
 
             self.update()
             self.draw()

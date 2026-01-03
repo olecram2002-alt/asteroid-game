@@ -4,11 +4,11 @@ from planet import Planet
 from asteroid import Asteroid
 from random import randint
 
-def center_collision(sprite_a, sprite_b):
-    match sprite_b.type:
-        case 'a-small': distance = 10**2
-        case 'a-medium' : distance = 30**2
-        case 'a-large' : distance = 50**2
+def center_collision(sprite_a, sprite_b, type_):
+    match type_:
+        case 'bullet': distance = sprite_b.radius**2
+
+        case 'asteroid': distance = (sprite_a.radius + sprite_b.radius)**2
         
     if sprite_a.position.distance_squared_to(sprite_b.position) <= distance:
         return True
@@ -53,28 +53,21 @@ class Manager:
 
     def collision_planet_check(self):
         for sprite in self.collide_sprites:
-            match sprite.type:
-                case 'a-samll': radius = 165**2 #165 is half of the lenght of the planet sprite
+            distance = (self.planet.radius + sprite.radius)**2
 
-                case 'a-medium' : radius = 170**2
-
-                case 'a-large' : radius = 220**2
-
-            if self.planet.position.distance_squared_to(sprite.position) < radius: 
+            if self.planet.position.distance_squared_to(sprite.position) < distance: 
                 sprite.explode('planet')
 
     
     def collision_bullet_check(self):
         collisions = pygame.sprite.groupcollide(self.bullet_sprites, self.collide_sprites, True, False, 
-                                                collided= center_collision)
+                                                collided= lambda a,b: center_collision(a, b, 'bullet'))
         
         for bullet in collisions:
             hit_bodies = collisions[bullet]
 
             for bodie in hit_bodies:
-                bodie.life -= self.player.damage
-                bodie.small_explode_sound.play()
-                if bodie.life <= 0 :
-                    bodie.explode('bullet')
+                bodie.get_hit(self.player)
+                
 
             

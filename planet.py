@@ -25,6 +25,7 @@ class Planet(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center = self.position)
 
+        self.radius = self.rect.width/2 - 5
 
     def update(self):
         self.rotate()

@@ -22,6 +22,8 @@ class Celestial_body(pygame.sprite.Sprite):
         self.original_image = pygame.transform.scale_by(raw_image, scale_factor)
         self.image = self.original_image
         self.rect = self.image.get_rect(center = self.position)
+        self.radius = self.rect.width/2 - 5 # -10 is just a correction so they overlap for a little bit
+        self.mass, self.life = asteroid_atributes[self.type]
 
         #sounds
         self.explode_sound = pygame.mixer.Sound('sounds/explotions/sfx_exp_short_hard2.wav')
@@ -82,12 +84,33 @@ class Celestial_body(pygame.sprite.Sprite):
     
 
     def inelastic_collision(self, hit_sprite):
-        print('collision')
-        self.explode('asteroid')
+        #asteroid new type
+        rank = {'a-small':1, 'a-medium':2, 'a-large':3}
+        reverse_rank = {1:'a-small', 2:'a-medium', 3:'a-large'}
+
+        val1,val2 = rank[self.type], rank[hit_sprite.type]
+
+        if val1 == val2:
+            new_val = min(3, val1 +1) #change this depending of how many sizes of asteroids
+        else:
+            new_val = max(val1, val2)
+
+        new_type = reverse_rank[new_val]
+
+        #asteroid new position
+        new_position = (self.position + hit_sprite.position)/2
+
+        #new velocity
+        new_velocity = (self.velocity*self.mass + hit_sprite.velocity*hit_sprite.mass)/(self.mass + hit_sprite.mass)
+
+        #create new asteroid
         hit_sprite.explode('asteroid')
+        self.type = new_type
+        self.load_assets()
+        self.position = new_position
+        self.velocity = new_velocity
+
         
-
-
     def explode(self, type_:str):
         #animation code for explotion in the future
         self.explode_sound.play()
@@ -108,33 +131,15 @@ class Asteroid(Celestial_body):
         self.type = type_
         super().__init__(*groups)
 
-        self.radius = self.rect.width/2 - 5 # -10 is just a correction so they overlap for a little bit
-
 
     def load_assets(self)->pygame.Surface:
         index = randint(1,3)
         #load images
         match self.type:
-            case 'a-small':
-                raw_image = pygame.image.load(f'sprites/small_sz_asteroid-{index}.png')
-                self.mass = 100
-                self.life = 10
+            case 'a-small': raw_image = pygame.image.load(f'sprites/small_sz_asteroid-{index}.png')
 
-            case 'a-medium':
-                raw_image = pygame.image.load(f'sprites/medium_sz_asteroid-{index}.png')
-                self.mass = 500
-                self.life = 30
+            case 'a-medium': raw_image = pygame.image.load(f'sprites/medium_sz_asteroid-{index}.png')
 
-            case 'a-large':
-                raw_image = pygame.image.load(f'sprites/large_sz_asteroid-{index}.png')
-                self.mass = 1000
-                self.life = 50
+            case 'a-large': raw_image = pygame.image.load(f'sprites/large_sz_asteroid-{index}.png')
+
         return raw_image
-
-
-        
-        
-                
-
-
-

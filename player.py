@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
 
         #attributes
         self.speed = 2
-        self.shotting_speed = 100
+        self.shotting_speed = 80
         self.damage = 10
 
         #shooting
@@ -41,7 +41,7 @@ class Player(pygame.sprite.Sprite):
         self.input()
 
         x,y = width/2, height/2
-        radius = 200 
+        radius = 100*scale_factor #arbitrary number just feel bad
         self.degree_angle = -90 - math.degrees(self.angle) #angle to rotate the sprite
 
         self.position = (x + radius*math.cos(self.angle), (y + radius*math.sin(self.angle)))
@@ -61,8 +61,7 @@ class Player(pygame.sprite.Sprite):
         if current_time - self.time_last_trigger >= self.shotting_speed:
             Ammo(self.degree_angle, self.rect.center, self.bullet_sprites, visible_sprites)
             self.shoot_sound.play()
-            self.time_last_trigger = current_time
-        
+            self.time_last_trigger = current_time  
     
 
     def update(self):
@@ -77,7 +76,7 @@ class Ammo(pygame.sprite.Sprite):
         rad_angle = math.radians(angle+90)
         self.direction = pygame.math.Vector2(math.cos(rad_angle), -math.sin(rad_angle))
 
-        self.position = self.direction*64 + position #32 is half the lenght of the bullet sprite
+        self.position = self.direction*32 + position #32 is half the lenght of the bullet sprite
         
         raw_image = pygame.image.load('sprites/basic_ammo.png')
         self.original_image = pygame.transform.scale_by(raw_image,scale_factor)
@@ -96,13 +95,4 @@ class Ammo(pygame.sprite.Sprite):
         self.move()
         if self.position.distance_squared_to((width/2, height/2)) >= 900**2:
             self.kill()
-
-
-
-
-
-        
-
-
-
 

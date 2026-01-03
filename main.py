@@ -69,6 +69,7 @@ class Game:
             sprite.update()
         self.manager.collision_bullet_check()
         self.manager.collision_planet_check()
+        self.manager.collision_asteroid_check()
 
 
     def draw(self):

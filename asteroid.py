@@ -40,16 +40,15 @@ class Celestial_body(pygame.sprite.Sprite):
     
     
     def calculate_velocity0(self, position:tuple)->tuple:
-        magnitud = randint(4,6)
         if randint(0,1): sign = -1
         else: sign = 1
 
         origin = pygame.math.Vector2(width/2, height/2)
 
         direction_center = (origin - position).normalize()
-        direction = direction_center.rotate(sign*randint(25,40))
+        direction = direction_center.rotate(sign*angle_spawn_range)
 
-        velocity = direction * magnitud
+        velocity = direction * speed_magnitud
         return velocity
     
 
@@ -80,6 +79,13 @@ class Celestial_body(pygame.sprite.Sprite):
         self.rect.center = self.position
 
         self.acceleration *= 0
+    
+
+    def inelastic_collision(self, hit_sprite):
+        print('collision')
+        self.explode('asteroid')
+        hit_sprite.explode('asteroid')
+        
 
 
     def explode(self, type_:str):

@@ -70,4 +70,19 @@ class Manager:
                 bodie.get_hit(self.player)
                 
 
+    def collision_asteroid_check(self):
+        self.asteroids.remove(self.planet)
+        for sprite in self.asteroids:
+            self.asteroids.remove(sprite)
+
+            collisions = pygame.sprite.spritecollide(sprite, self.asteroids, False, 
+                                                     collided= lambda a,b: center_collision(a, b, 'asteroid'))
+            
+            for hit in collisions:
+                sprite.inelastic_collision(hit)
+
+            self.asteroids.add(sprite)
+
+        self.asteroids.add(self.planet)
+
             

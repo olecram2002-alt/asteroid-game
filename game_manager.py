@@ -2,6 +2,7 @@ import pygame
 from player import Player
 from planet import Planet
 from asteroid import Asteroid
+from ui import UI
 from random import randint
 
 def center_collision(sprite_a, sprite_b, type_):
@@ -35,27 +36,38 @@ class Manager:
         self.bullet_sprites.name = 'bullet_sprites'
 
         #important sprites
-        self.player = Player((600,380), self.bullet_sprites, self.visible_sprites)
+        self.player = Player((600,380), self, self.bullet_sprites, self.visible_sprites)
         self.planet = Planet(self.visible_sprites, self.asteroids)
+
+        #user interface 
+        self.ui = UI(self.player, self.planet)
 
 
     def generate_celestial_body(self):
         odds = randint(1,10)
         if odds == 1:
             type_ = 'a-small'
-        elif 1 < odds <= 7:
+        elif 1 < odds <= 8:
             type_ = 'a-medium'
-        elif 7 < odds <= 10:
+        elif 8 < odds <= 10:
             type_ = 'a-large'
         Asteroid(type_, self.visible_sprites, self.collide_sprites, self.asteroids)
-        print('created')
+
+
+    def get_xp_max(self):
+        x = 0
+        while True:
+            max_xp = 2**(0.2 * x)
+            yield round(max_xp*100)
+            x += 1
 
 
     def collision_planet_check(self):
         for sprite in self.collide_sprites:
             distance = (self.planet.radius + sprite.radius)**2
 
-            if self.planet.position.distance_squared_to(sprite.position) < distance: 
+            if self.planet.position.distance_squared_to(sprite.position) < distance:
+                self.planet.get_hit()
                 sprite.explode('planet')
 
     

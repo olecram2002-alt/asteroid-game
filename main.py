@@ -1,6 +1,6 @@
 import pygame,sys
 from game_manager import Manager
-from settings import *
+import settings as s
 class Game:
     def __init__(self):
 
@@ -12,17 +12,17 @@ class Game:
         screen_width = info.current_w
         screen_height = info.current_h
 
-        if screen_width < width or screen_height < height:
+        if screen_width < s.width or screen_height < s.height:
             flags = pygame.FULLSCREEN | pygame.SCALED
         else: 
             flags = 0
         
-        self.screen = pygame.display.set_mode((width,height), flags)
+        self.screen = pygame.display.set_mode((s.width,s.height), flags)
         pygame.display.set_caption('Asteroids')
         self.clock = pygame.time.Clock()
         pygame.mixer.music.load('sounds/music/Cranky-2D-Creatures.ogg')
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(music_volume)
+        pygame.mixer.music.set_volume(s.music_volume)
 
         #game manager
         self.manager = Manager()
@@ -32,7 +32,7 @@ class Game:
 
         #events
         self.asteroid_spawn = pygame.USEREVENT + 1
-        pygame.time.set_timer(self.asteroid_spawn, asteroid_spawn_time)
+        pygame.time.set_timer(self.asteroid_spawn, s.asteroid_spawn_time)
 
 
     def run(self):
@@ -55,7 +55,7 @@ class Game:
             self.draw()
 
             pygame.display.update()
-            self.clock.tick(fps)
+            self.clock.tick(s.fps)
 
 
     def update(self):
@@ -75,6 +75,7 @@ class Game:
     def draw(self):
         self.screen.fill('black')
         self.manager.visible_sprites.draw(self.screen)
+        self.manager.ui.display()
         
 
 

@@ -36,7 +36,6 @@ class Tester:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     #asteroid type
-                    print(self.manager.asteroids)
                     index = randint(0,2)
                     Asteroid_test(asteroids_list[index],event.pos,self.manager.visible_sprites,self.manager.asteroids)
 

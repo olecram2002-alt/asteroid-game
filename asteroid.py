@@ -1,5 +1,5 @@
 import pygame, math
-from settings import *
+import settings as s
 from random import randint
 
 class Celestial_body(pygame.sprite.Sprite):
@@ -21,22 +21,24 @@ class Celestial_body(pygame.sprite.Sprite):
         self.setup_visuals()
 
         #sounds
-        self.explode_sound = pygame.mixer.Sound('sounds/explotions/sfx_exp_short_hard2.wav')
-        self.explode_sound.set_volume(efex_volume)
+        self.explode_sound_1 = pygame.mixer.Sound('sounds/explotions/sfx_exp_short_hard2.wav')
+        self.explode_sound_1.set_volume(s.efex_volume)
+        self.explode_sound_2 = pygame.mixer.Sound('sounds/explotions/sfx_exp_medium6.wav')
+        self.explode_sound_2.set_volume(s.efex_volume)
         self.small_explode_sound = pygame.mixer.Sound('sounds/explotions/sfx_exp_shortest_soft2.wav')
-        self.small_explode_sound.set_volume(efex_volume)
+        self.small_explode_sound.set_volume(s.efex_volume)
 
         #distance check for sounds
-        center = pygame.math.Vector2(width/2, height/2)
-        if self.position.distance_squared_to(center) <= (width**2 + height**2)/4:
+        center = pygame.math.Vector2(s.width/2, s.height/2)
+        if self.position.distance_squared_to(center) <= (s.width**2 + s.height**2)/4:
             self.inrange = True
 
         else: self.inrange = False
 
 
     def calculate_position0(self)->tuple:
-        x,y = width/2, height/2
-        screen_radius = math.sqrt(width**2 + height**2)/2 
+        x,y = s.width/2, s.height/2
+        screen_radius = math.sqrt(s.width**2 + s.height**2)/2 
         angle = math.radians(randint(0,360))
 
         position = (x + screen_radius*math.cos(angle), y + screen_radius*math.sin(angle))
@@ -47,22 +49,26 @@ class Celestial_body(pygame.sprite.Sprite):
         if randint(0,1): sign = -1
         else: sign = 1
 
-        origin = pygame.math.Vector2(width/2, height/2)
+        origin = pygame.math.Vector2(s.width/2, s.height/2)
 
         direction_center = (origin - position).normalize()
-        direction = direction_center.rotate(sign*angle_spawn_range)
+        direction = direction_center.rotate(sign * s.angle_spawn_range)
 
-        velocity = direction * speed_magnitud
+        velocity = direction * s.speed_magnitud
         return velocity
     
 
-    def setup_visuals(self):
-        raw_image = self.load_assets()
-        self.original_image = pygame.transform.scale_by(raw_image, scale_factor)
-        self.image = self.original_image
+    def setup_visuals(self, sprite=False):
+        if sprite:
+            self.image = sprite.image
+        else:
+            raw_image = self.load_assets()
+            self.original_image = pygame.transform.scale_by(raw_image, s.scale_factor)
+            self.image = self.original_image
+
         self.rect = self.image.get_rect(center = self.position)
         self.radius = self.rect.width/2 - 5 # -10 is just a correction so they overlap for a little bit
-        self.mass, self.life = asteroid_atributes[self.type]
+        self.mass, self.life, self.xp = s.asteroid_atributes[self.type]
     
 
     def load_assets(self):
@@ -80,7 +86,7 @@ class Celestial_body(pygame.sprite.Sprite):
             if sprite is self:
                 continue
             force_d:pygame.math.Vector2 = sprite.position - self.position
-            force_m = (G * self.mass*sprite.mass)/self.position.distance_squared_to(sprite.position)
+            force_m = (s.G * self.mass*sprite.mass)/self.position.distance_squared_to(sprite.position)
             force_d.scale_to_length(force_m)
 
             force += force_d
@@ -96,36 +102,56 @@ class Celestial_body(pygame.sprite.Sprite):
 
     def inelastic_collision(self, hit_sprite):
         #asteroid new type
-        rank = {'a-small':1, 'a-medium':2, 'a-large':3}
-        reverse_rank = {1:'a-small', 2:'a-medium', 3:'a-large'}
+        rank = {}
+        reverse_rank = {}
+        for index,item in enumerate(s.asteroids_list):
+            rank[item] = index + 1
+            reverse_rank[index + 1] = item
+
 
         val1,val2 = rank[self.type], rank[hit_sprite.type]
 
         if val1 == val2:
-            new_val = min(3, val1 +1) #change this depending of how many sizes of asteroids
+            new_val = min(len(s.asteroids_list), val1 +1) #first variable is the num of asteroids in asteroids_list
         else:
             new_val = max(val1, val2)
 
         new_type = reverse_rank[new_val]
 
-        #asteroid new position
-        new_position = (self.position + hit_sprite.position)/2
-
         #new velocity
         new_velocity = (self.velocity*self.mass + hit_sprite.velocity*hit_sprite.mass)/(self.mass + hit_sprite.mass)
 
-        #create new asteroid
-        hit_sprite.explode('asteroid')
+        #asteroid new position and create new asteroid
         self.type = new_type
-        self.setup_visuals()
+        if val1 == val2:
+            new_position = (self.position + hit_sprite.position)/2
+
+            self.setup_visuals()
+        elif val1 > val2:
+            new_position = self.position
+
+        else:
+            new_position = hit_sprite.position
+
+            self.setup_visuals(hit_sprite)
+
         self.position = new_position
         self.velocity = new_velocity
         self.rect.center = self.position
 
+        hit_sprite.explode('asteroid')
+
         
     def explode(self, type_:str):
         #animation code for explotion in the future
-        if self.inrange: self.explode_sound.play()
+        match type_:
+            case 'planet':
+                self.explode_sound_2.play()
+            case 'bullet':
+                pass
+            case 'asteroid':
+                if self.inrange: 
+                    self.explode_sound_1.play()
         self.kill()
 
 
@@ -134,6 +160,7 @@ class Celestial_body(pygame.sprite.Sprite):
         self.small_explode_sound.play()
 
         if self.life <= 0:
+            player.xp += self.xp
             self.explode('bullet')
         
 
@@ -153,5 +180,7 @@ class Asteroid(Celestial_body):
             case 'a-medium': raw_image = pygame.image.load(f'sprites/medium_sz_asteroid-{index}.png')
 
             case 'a-large': raw_image = pygame.image.load(f'sprites/large_sz_asteroid-{index}.png')
+
+            case 'a-xlarge': raw_image = pygame.image.load(f'sprites/xlarge_sz_asteroid-{index}.png')
 
         return raw_image

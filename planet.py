@@ -1,20 +1,20 @@
 import pygame
-from settings import *
+import settings as s
 
 class Planet(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
-        self.position = pygame.math.Vector2(width/2, height/2)
+        self.position = pygame.math.Vector2(s.width/2, s.height/2)
         self.mass = 4000 #kg
         
         #planet
         raw_planet_image = pygame.image.load('sprites/planet.png').convert_alpha()
-        self.original_p_image = pygame.transform.scale_by(raw_planet_image, scale_factor)
+        self.original_p_image = pygame.transform.scale_by(raw_planet_image, s.scale_factor)
         self.planet_angle = 0
 
         #clouds
         raw_clouds_image = pygame.image.load('sprites/clouds.png').convert_alpha()
-        self.original_c_image = pygame.transform.scale_by(raw_clouds_image, scale_factor)
+        self.original_c_image = pygame.transform.scale_by(raw_clouds_image, s.scale_factor)
         self.clouds_angle = 0
 
         #transparent surface
@@ -25,9 +25,10 @@ class Planet(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center = self.position)
 
+        #important stats
         self.radius = self.rect.width/2 - 5
+        self.life = s.atributes['planet_life']
 
-        print(self.rect.width)
 
     def update(self):
         self.rotate()
@@ -48,4 +49,8 @@ class Planet(pygame.sprite.Sprite):
         self.image.blit(clouds, rect_c)
 
         self.rect = self.image.get_rect(center = self.position)
+
+
+    def get_hit(self):
+        self.life -= 10
 

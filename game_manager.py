@@ -44,7 +44,7 @@ class Manager:
         self.ui = UI(self.player, self.planet)
 
         #menu
-        self.menu = Upgrade_Menu()
+        self.upgrade_menu = Upgrade_Menu()
 
 
     def generate_celestial_body(self):

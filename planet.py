@@ -55,4 +55,5 @@ class Planet(pygame.sprite.Sprite):
         self.life -= 10
         if self.life == 0:
             s.game_over = True
+            s.game = False
 

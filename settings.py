@@ -6,6 +6,7 @@ efex_volume = 0.3
 music_volume = 0.1
 game_over = False
 menu = False
+game = True
 
 #ui helpers
 empty_bar_color = '#1e3a29'
@@ -30,8 +31,9 @@ asteroid_atributes = {'a-small':(100,10,10),      # mass, life, xp
 #atributes
 atributes = {'planet_life':100,
             'movement_speed':2,
-            'shooting_speed':80,
-            'damage':10}
+            'shooting_speed':100,
+            'damage':10,
+            'luck':0}
 
 #implement life in the planet
 #implement particles

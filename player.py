@@ -71,7 +71,9 @@ class Player(pygame.sprite.Sprite):
 
     def xp_handle(self):
         if self.xp >= self.max_xp:
+            self.manager.upgrade_menu.create_upgrades()
             s.menu = True
+            s.game = False
             self.xp = 0
             self.max_xp = next(self.xp_max_generator)
             self.level += 1

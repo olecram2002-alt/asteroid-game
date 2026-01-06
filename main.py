@@ -45,14 +45,13 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-                if event.type == self.asteroid_spawn:
+                if event.type == self.asteroid_spawn and s.game == True:
                     self.manager.generate_celestial_body()
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         if s.menu == True:
-                            pygame.mixer.music.play(-1, fade_ms=1000)
-                            s.menu = False
+                            self.manager.upgrade_menu.close_menu()
                         else:
                             pygame.quit()
                             sys.exit()
@@ -68,10 +67,11 @@ class Game:
         if s.game_over == True:
             pygame.mixer.music.fadeout(1000)
 
-        if s.menu == True:
+        elif s.menu == True:
             pygame.mixer.music.fadeout(1000)
+            self.manager.upgrade_menu.input()
 
-        if s.menu == False and s.game_over == False:
+        elif s.game == True:
             self.manager.planet.update()
             self.manager.player.update()
             for sprite in self.manager.asteroids:
@@ -91,8 +91,8 @@ class Game:
         self.manager.ui.display()
         if s.game_over == True:
             self.manager.ui.game_over()
-        if s.menu == True:
-            self.manager.menu.display()
+        elif s.menu == True:
+            self.manager.upgrade_menu.display()
         
 
 

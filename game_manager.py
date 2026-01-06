@@ -54,7 +54,7 @@ class Manager:
         self.ui = UI(self.player, self.planet)
 
         #menu
-        self.upgrade_menu = Upgrade_Menu(self.planet)
+        self.upgrade_menu = Upgrade_Menu(self.planet, self)
 
 
     def generate_celestial_body(self):
@@ -73,6 +73,14 @@ class Manager:
         while True:
             max_xp = 2**(0.2 * x)
             yield round(max_xp*100)
+            x += 1
+
+
+    def get_upgrade_price(self):
+        x = 1
+        while True:
+            price = x
+            yield price
             x += 1
 
 

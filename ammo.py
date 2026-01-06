@@ -138,7 +138,7 @@ class Laser(Ammo):
     
 
     def get_damage(self):
-        return s.atributes['damage']*0.1
+        return s.atributes['damage']*0.05
     
 
     def update(self):

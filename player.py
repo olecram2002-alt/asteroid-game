@@ -78,7 +78,7 @@ class Player(pygame.sprite.Sprite):
                         for i in range(value):
                             weapons.append(key)
 
-                if not random.randint(0,5-min(5,s.atributes['luck'])):
+                if not random.randint(0,10-min(10,s.atributes['luck'])):
                     weapon_name = random.choice(weapons or ['basic'])
                 else: weapon_name = 'basic'
 

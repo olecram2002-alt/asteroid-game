@@ -3,12 +3,13 @@ import settings as s
 import random
 
 class Upgrade_Menu:
-    def __init__(self, planet):
+    def __init__(self, planet, manager):
         self.surface = pygame.display.get_surface()
         self.title_font = pygame.font.Font(s.font_location,50)
         self.mouse_position = (0,0)
         self.selection_list = []
         self.planet = planet
+        self.price_generator = manager.get_upgrade_price()
 
 
     def input(self):
@@ -19,15 +20,18 @@ class Upgrade_Menu:
         for selection in self.selection_list:
             if selection.rect.collidepoint(mouse_position):
 
-                if selection.type == 'big':
+                if selection.type == 'big' and s.gems >= (selection.price):
                     s.weapons[selection.name] += selection.mod
+                    s.gems -= selection.price
                 elif selection.name == 'luck':
                     s.atributes['luck'] += selection.mod
-                else:
+                elif selection.type == 'small':
                     s.atributes[selection.name] = round(s.atributes[selection.name]*selection.mod,2)
 
                     if selection.name == 'planet_life':
                         self.planet.life = s.atributes['planet_life']
+                else:
+                    return False
 
                 return True
         
@@ -37,13 +41,14 @@ class Upgrade_Menu:
     def create_upgrades(self):
         height = ((s.height/2 - 70)/5) -20
         width = s.width/2 - 20
+        price_mod = next(self.price_generator)
 
         for i in range(0,5):
             if i < 3: upgrade_type = 'small'
             else: upgrade_type = 'big'
 
             y = s.height/4 + 70 + 53 + 106*i
-            upgrade = Upgrade((width, height), y , upgrade_type) 
+            upgrade = Upgrade((width, height), y , upgrade_type, price_mod) 
 
             self.selection_list.append(upgrade)
 
@@ -82,7 +87,7 @@ class Upgrade_Menu:
 
 
 class Upgrade(pygame.sprite.Sprite):
-    def __init__(self, size, y, upgrade_type, *groups):
+    def __init__(self, size, y, upgrade_type, price_mod, *groups):
         super().__init__(*groups)
 
         self.image = pygame.Surface(size)
@@ -98,7 +103,12 @@ class Upgrade(pygame.sprite.Sprite):
         elif num<=50: self.rarity = 2
         else : self.rarity = 1
 
+        self.price = price_mod*self.rarity
+
         self.name, self.text, self.mod = self.set_upgrade()
+
+        if self.type == 'big':
+            self.text = f'{self.text:<40}{('price:'+ str(self.price)):>20}'
 
 
     def set_upgrade(self):

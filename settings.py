@@ -32,13 +32,14 @@ asteroid_atributes = {'a-small':(100,10,10),      # mass, life, xp
 atributes = {'planet_life':100,
             'movement_speed':2,
             'shooting_speed':100,
+            'bullet_speed':10,
             'damage':10,
             'luck':0}
 
-weapons = {'multiple bullet':0,
+weapons = {'multiple bullet':1,
            'small orbiter':0,
            'bumerang orbit':0,
-           'rockets':0,
+           'homing':0,
            'laser':0,
            'black hole':0,
            'comet destroyer':0}

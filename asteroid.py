@@ -1,4 +1,5 @@
 import pygame, math
+import ammo
 import settings as s
 from random import randint
 
@@ -155,9 +156,11 @@ class Celestial_body(pygame.sprite.Sprite):
         self.kill()
 
 
-    def get_hit(self, player):
-        self.life -= player.damage
+    def get_hit(self, bullet, player):
+        self.life -= bullet.damage
         self.small_explode_sound.play()
+        if not isinstance(bullet, ammo.Laser):
+            bullet.kill()
 
         if self.life <= 0:
             player.xp += self.xp

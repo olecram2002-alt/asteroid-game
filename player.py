@@ -1,5 +1,7 @@
 import pygame, math
 import settings as s
+import ammo 
+import random
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos:tuple, manager, bullet_sprite_group:pygame.sprite.Group, *groups):
@@ -20,7 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.shotting_speed = s.atributes['shooting_speed']
         self.damage = s.atributes['damage']
         self.max_xp = next(self.xp_max_generator)
-        self.xp = 100
+        self.xp = 0
         self.level = 0
         self.gems = s.gems
 
@@ -65,8 +67,33 @@ class Player(pygame.sprite.Sprite):
                 visible_sprites = group
 
         if current_time - self.time_last_trigger >= self.shotting_speed:
-            Ammo(self.degree_angle, self.rect.center, self.bullet_sprites, visible_sprites)
-            self.shoot_sound.play()
+            for i in range(s.weapons['multiple bullet']):
+                angle_modifier = 10*((i+1)//2)*(-1)**i # angle output will be  0,10,-10,20,-20
+                weapons = []
+
+                for key, value in s.weapons.items():
+                    if key == 'multiple bullet' or key == 'comet destroyer' or key == 'small orbiter':
+                        continue
+                    if value:
+                        for i in range(value):
+                            weapons.append(key)
+
+                if not random.randint(0,5-min(5,s.atributes['luck'])):
+                    weapon_name = random.choice(weapons or ['basic'])
+                else: weapon_name = 'basic'
+
+                match weapon_name:
+                    case 'basic': ammo.Basic(self.degree_angle + angle_modifier, self.rect.center, self.bullet_sprites, visible_sprites)
+
+                    case 'homing': ammo.Homing(self.degree_angle + angle_modifier, self.rect.center, self.manager, self.bullet_sprites, visible_sprites)
+
+                    case 'bumerang orbit': ammo.Bumerang(self.degree_angle + angle_modifier, self.rect.center, self.rect.width, self.bullet_sprites, visible_sprites)
+
+                    case 'laser': ammo.Laser(self.degree_angle + angle_modifier, self.rect.center, self.bullet_sprites, visible_sprites)
+
+                    case 'black hole': pass
+                
+                self.shoot_sound.play()
             self.time_last_trigger = current_time
 
 
@@ -84,32 +111,4 @@ class Player(pygame.sprite.Sprite):
         self.move()
         self.xp_handle()
 
-
-
-class Ammo(pygame.sprite.Sprite):
-    def __init__(self, angle, position, *groups):
-        super().__init__(*groups)
-
-        rad_angle = math.radians(angle+90)
-        self.direction = pygame.math.Vector2(math.cos(rad_angle), -math.sin(rad_angle))
-
-        self.position = self.direction*(32*s.scale_factor) + position #32 is half the lenght of the bullet sprite
-        
-        raw_image = pygame.image.load('sprites/basic_ammo.png').convert_alpha()
-        self.original_image = pygame.transform.scale_by(raw_image, s.scale_factor)
-        self.image = pygame.transform.rotate(self.original_image, angle)
-        self.rect = self.image.get_rect(center = self.position)
-
-        self.velocity = self.direction*10
-
-
-    def move(self):
-        self.position += self.velocity
-        self.rect.center =self.position
-
-
-    def update(self):
-        self.move()
-        if self.position.distance_squared_to((s.width/2, s.height/2)) >= 900**2:
-            self.kill()
 

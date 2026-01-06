@@ -1,4 +1,5 @@
 import pygame
+import ammo 
 from player import Player
 from planet import Planet
 from asteroid import Asteroid
@@ -8,14 +9,23 @@ from random import randint
 
 def center_collision(sprite_a, sprite_b, type_):
     match type_:
-        case 'bullet': distance = sprite_b.radius**2
+        case 'bullet': 
+
+            if isinstance(sprite_a, ammo.Laser):
+                closest_x = max(sprite_a.rect.left, min(sprite_b.position.x, sprite_a.rect.right))
+                closest_y = max(sprite_a.rect.top, min(sprite_b.position.y, sprite_a.rect.bottom))
+                closest_point = pygame.math.Vector2(closest_x,closest_y)
+
+                distance = sprite_b.position.distance_to(closest_point)
+
+                return distance < (sprite_b.radius - 10)
+            
+            distance = sprite_b.radius**2
 
         case 'asteroid': distance = (sprite_a.radius + sprite_b.radius)**2
         
-    if sprite_a.position.distance_squared_to(sprite_b.position) <= distance:
-        return True
-    else: 
-        return False
+    return sprite_a.position.distance_squared_to(sprite_b.position) <= distance
+
     
 
 
@@ -76,14 +86,14 @@ class Manager:
 
     
     def collision_bullet_check(self):
-        collisions = pygame.sprite.groupcollide(self.bullet_sprites, self.collide_sprites, True, False, 
+        collisions = pygame.sprite.groupcollide(self.bullet_sprites, self.collide_sprites, False, False, 
                                                 collided= lambda a,b: center_collision(a, b, 'bullet'))
         
         for bullet in collisions:
             hit_bodies = collisions[bullet]
 
             for bodie in hit_bodies:
-                bodie.get_hit(self.player)
+                bodie.get_hit(bullet, self.player)
                 
 
     def collision_asteroid_check(self):

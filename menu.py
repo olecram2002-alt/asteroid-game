@@ -21,9 +21,8 @@ class Upgrade_Menu:
 
                 if selection.type == 'big':
                     s.weapons[selection.name] += selection.mod
-                if selection.name == 'luck':
+                elif selection.name == 'luck':
                     s.atributes['luck'] += selection.mod
-                
                 else:
                     s.atributes[selection.name] = round(s.atributes[selection.name]*selection.mod,2)
 
@@ -107,12 +106,13 @@ class Upgrade(pygame.sprite.Sprite):
                           2:[('movement_speed', 'Increase movement speed by 20%',1.20),
                               ('shooting_speed', 'Increase shooting speed by 10%',0.90),
                               ('damage', 'Increase damage by 20%',1.20)],
-                          3:[('luck', 'Increase luck by 1',1)]}
+                          3:[('luck', 'Increase luck by 1',1),
+                             ('bullet_speed','Increase bullet speed by 20%',1.20)]}
         
-        big_updates = {1:[('multiple bulet','Add one more bullet in a angle',1),
-                          ('small orbiter','Orbiter, protects from 3 collisions',1),
+        big_updates = {1:[('multiple bullet','Add one more bullet in a angle',1),
+                          ('small orbiter','Orbiter, protects from 5 collisions',1),
                           ('bumerang orbit','Bullets now follow an orbit',1)],
-                       2:[('rockets','homing missiles, less damage',1),
+                       2:[('homing','homing bullets, less damage',1),
                           ('laser','Shoot a laser for a couple seconds',1)],
                        3:[('black hole','Shoots a black hole that attracts asteroids',1),
                           ('comet destroyer','instantly destroy the next comet',1)]}

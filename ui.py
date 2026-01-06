@@ -9,14 +9,13 @@ class UI:
         self.font = pygame.font.Font(s.font_location,40)
         self.planet = planet
         self.player = player
-        self.life_max = s.atributes['planet_life']
 
 
     def draw_background(self):
         self.xp_bar_rect = pygame.Rect(0,0,s.width,30)
         pygame.draw.rect(self.surface, s.empty_bar_color, self.xp_bar_rect)
 
-        self.life_bar_rect = pygame.Rect(30,60,200,30)
+        self.life_bar_rect = pygame.Rect(30,60,s.atributes['planet_life'] + 10,30)
         pygame.draw.rect(self.surface, s.empty_bar_color, self.life_bar_rect)
 
     
@@ -30,7 +29,7 @@ class UI:
 
         #life
         self.life_num = self.planet.life
-        self.life_bar_width = self.life_num * (190 / self.life_max)
+        self.life_bar_width = self.life_num
 
         life_rect = pygame.Rect(35,65,self.life_bar_width,20)
         pygame.draw.rect(self.surface, s.life_bar_color, life_rect)
@@ -46,10 +45,25 @@ class UI:
         self.surface.blit(life_text, life_rect)
 
 
+    def draw_gems(self):
+        #image
+        gem = pygame.image.load('sprites/gem.png').convert_alpha()
+        gem_rect = gem.get_rect()
+        gem_rect.center = (30 + gem_rect.width/2, 120 + gem_rect.width/2)
+        self.surface.blit(gem, gem_rect)
+
+        #text
+        text = self.font.render(f'{s.gems}', False, s.font_color)
+        text_rect = text.get_rect(center = (45 + gem_rect.width, 120 + gem_rect.width/2))
+        self.surface.blit(text, text_rect)
+        
+
+
     def display(self):
         self.draw_background()
         self.draw_stats()
         self.draw_text()
+        self.draw_gems()
     
 
     def game_over(self):

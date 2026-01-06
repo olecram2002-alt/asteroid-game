@@ -20,8 +20,9 @@ class Player(pygame.sprite.Sprite):
         self.shotting_speed = s.atributes['shooting_speed']
         self.damage = s.atributes['damage']
         self.max_xp = next(self.xp_max_generator)
-        self.xp = 0
+        self.xp = 100
         self.level = 0
+        self.gems = s.gems
 
         #shooting
         self.time_last_trigger = 0
@@ -94,7 +95,7 @@ class Ammo(pygame.sprite.Sprite):
 
         self.position = self.direction*(32*s.scale_factor) + position #32 is half the lenght of the bullet sprite
         
-        raw_image = pygame.image.load('sprites/basic_ammo.png')
+        raw_image = pygame.image.load('sprites/basic_ammo.png').convert_alpha()
         self.original_image = pygame.transform.scale_by(raw_image, s.scale_factor)
         self.image = pygame.transform.rotate(self.original_image, angle)
         self.rect = self.image.get_rect(center = self.position)

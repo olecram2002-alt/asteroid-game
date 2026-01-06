@@ -24,17 +24,26 @@ speed_magnitud = randint(4,6)
 asteroids_list = ['a-small', 'a-medium', 'a-large', 'a-xlarge']
 
 asteroid_atributes = {'a-small':(100,10,10),      # mass, life, xp
-                      'a-medium':(500,30,20),
-                      'a-large':(1000,50,20),
-                      'a-xlarge':(1500,100,30)}
+                      'a-medium':(500,20,20),
+                      'a-large':(1000,30,20),
+                      'a-xlarge':(1500,50,30)}
 
-#atributes
+#player
 atributes = {'planet_life':100,
             'movement_speed':2,
             'shooting_speed':100,
             'damage':10,
             'luck':0}
 
-#implement life in the planet
+weapons = {'multiple bullet':0,
+           'small orbiter':0,
+           'bumerang orbit':0,
+           'rockets':0,
+           'laser':0,
+           'black hole':0,
+           'comet destroyer':0}
+
+gems = 0
+
 #implement particles
 #implement a score system

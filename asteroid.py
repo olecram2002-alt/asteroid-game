@@ -161,8 +161,12 @@ class Celestial_body(pygame.sprite.Sprite):
 
         if self.life <= 0:
             player.xp += self.xp
+            s.gems += self.calculate_drop(self.type)
             self.explode('bullet')
+
         
+    def calculate_drop(self, type_):
+        raise NotImplementedError('Subclass has to implement this method')
 
 
 class Asteroid(Celestial_body):
@@ -175,12 +179,22 @@ class Asteroid(Celestial_body):
         index = randint(1,3)
         #load images
         match self.type:
-            case 'a-small': raw_image = pygame.image.load(f'sprites/small_sz_asteroid-{index}.png')
+            case 'a-small': raw_image = pygame.image.load(f'sprites/small_sz_asteroid-{index}.png').convert_alpha()
 
-            case 'a-medium': raw_image = pygame.image.load(f'sprites/medium_sz_asteroid-{index}.png')
+            case 'a-medium': raw_image = pygame.image.load(f'sprites/medium_sz_asteroid-{index}.png').convert_alpha()
 
-            case 'a-large': raw_image = pygame.image.load(f'sprites/large_sz_asteroid-{index}.png')
+            case 'a-large': raw_image = pygame.image.load(f'sprites/large_sz_asteroid-{index}.png').convert_alpha()
 
-            case 'a-xlarge': raw_image = pygame.image.load(f'sprites/xlarge_sz_asteroid-{index}.png')
+            case 'a-xlarge': raw_image = pygame.image.load(f'sprites/xlarge_sz_asteroid-{index}.png').convert_alpha()
 
         return raw_image
+    
+
+    def calculate_drop(self, type_):
+        if type_ == 'a-xlarge':
+            return 1
+        elif type_ == 'a-large':
+            if randint(0,2):
+                return 1
+            
+        return 0

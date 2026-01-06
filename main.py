@@ -56,6 +56,12 @@ class Game:
                             pygame.quit()
                             sys.exit()
 
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if s.menu ==True:
+                            if self.manager.upgrade_menu.get_selection(event.pos):
+                                self.manager.upgrade_menu.close_menu()
+
             self.update()
             self.draw()
 

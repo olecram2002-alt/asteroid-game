@@ -3,15 +3,36 @@ import settings as s
 import random
 
 class Upgrade_Menu:
-    def __init__(self):
+    def __init__(self, planet):
         self.surface = pygame.display.get_surface()
         self.title_font = pygame.font.Font(s.font_location,50)
         self.mouse_position = (0,0)
-        self.selections = []
+        self.selection_list = []
+        self.planet = planet
 
 
     def input(self):
         self.mouse_position = pygame.mouse.get_pos()
+
+
+    def get_selection(self, mouse_position):
+        for selection in self.selection_list:
+            if selection.rect.collidepoint(mouse_position):
+
+                if selection.type == 'big':
+                    s.weapons[selection.name] += selection.mod
+                if selection.name == 'luck':
+                    s.atributes['luck'] += selection.mod
+                
+                else:
+                    s.atributes[selection.name] = round(s.atributes[selection.name]*selection.mod,2)
+
+                    if selection.name == 'planet_life':
+                        self.planet.life = s.atributes['planet_life']
+
+                return True
+        
+        return False
 
 
     def create_upgrades(self):
@@ -25,14 +46,16 @@ class Upgrade_Menu:
             y = s.height/4 + 70 + 53 + 106*i
             upgrade = Upgrade((width, height), y , upgrade_type) 
 
-            self.selections.append(upgrade)
+            self.selection_list.append(upgrade)
 
         
     def draw_upgrade_options(self):
 
-        for selection in self.selections:
+        for selection in self.selection_list:
             if selection.rect.collidepoint(self.mouse_position):
                 self.surface.blit(selection.image, selection.rect)
+                selection.selected = True
+            selection.selected = False
                 
             selection.draw()
 
@@ -50,8 +73,9 @@ class Upgrade_Menu:
 
 
     def close_menu(self):
-        for selection in self.selections:
+        for selection in self.selection_list:
             selection.kill()
+        self.selection_list.clear()
         pygame.mixer.music.play(-1, fade_ms=1000)
         s.menu = False
         s.game = True
@@ -75,22 +99,29 @@ class Upgrade(pygame.sprite.Sprite):
         elif num<=50: self.rarity = 2
         else : self.rarity = 1
 
-        self.name, self.text = self.set_upgrade()
+        self.name, self.text, self.mod = self.set_upgrade()
 
 
     def set_upgrade(self):
-        small_upgrades = {1:[('planet_life','Restore all planet life')],
-                          2:[('movement_speed', 'Increase movement speed by 20%'),
-                              ('shooting_speed', 'Increase shooting speed by 10%'),
-                              ('damage', 'Increase damage by 20%')],
-                          3:[('luck', 'Increase luck by 1')]}
+        small_upgrades = {1:[('planet_life','Restore all planet life, increse max by 10%',1.10)],
+                          2:[('movement_speed', 'Increase movement speed by 20%',1.20),
+                              ('shooting_speed', 'Increase shooting speed by 10%',0.90),
+                              ('damage', 'Increase damage by 20%',1.20)],
+                          3:[('luck', 'Increase luck by 1',1)]}
         
-        big_updates = {}
+        big_updates = {1:[('multiple bulet','Add one more bullet in a angle',1),
+                          ('small orbiter','Orbiter, protects from 3 collisions',1),
+                          ('bumerang orbit','Bullets now follow an orbit',1)],
+                       2:[('rockets','homing missiles, less damage',1),
+                          ('laser','Shoot a laser for a couple seconds',1)],
+                       3:[('black hole','Shoots a black hole that attracts asteroids',1),
+                          ('comet destroyer','instantly destroy the next comet',1)]}
+        
         if self.type == 'small':
             return random.choice(small_upgrades[self.rarity])
         
         if self.type == 'big':
-            return ('','')
+            return random.choice(big_updates[self.rarity])
         
 
     def draw(self):

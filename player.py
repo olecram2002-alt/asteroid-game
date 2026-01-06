@@ -21,6 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.damage = s.atributes['damage']
         self.max_xp = next(self.xp_max_generator)
         self.xp = 0
+        self.level = 0
 
         #shooting
         self.time_last_trigger = 0
@@ -70,11 +71,12 @@ class Player(pygame.sprite.Sprite):
 
     def xp_handle(self):
         if self.xp >= self.max_xp:
-            #trigger level up menu
+            s.menu = True
             self.xp = 0
             self.max_xp = next(self.xp_max_generator)
-    
+            self.level += 1
 
+    
     def update(self):
         self.move()
         self.xp_handle()
@@ -88,7 +90,7 @@ class Ammo(pygame.sprite.Sprite):
         rad_angle = math.radians(angle+90)
         self.direction = pygame.math.Vector2(math.cos(rad_angle), -math.sin(rad_angle))
 
-        self.position = self.direction*32 + position #32 is half the lenght of the bullet sprite
+        self.position = self.direction*(32*s.scale_factor) + position #32 is half the lenght of the bullet sprite
         
         raw_image = pygame.image.load('sprites/basic_ammo.png')
         self.original_image = pygame.transform.scale_by(raw_image, s.scale_factor)

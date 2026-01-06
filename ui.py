@@ -37,11 +37,11 @@ class UI:
 
 
     def draw_text(self):
-        xp_text = self.font.render('XP', False, s.font_color)
+        xp_text = self.font.render(f'Level: {self.player.level}', False, s.font_color)
         xp_rect = xp_text.get_rect(center=self.xp_bar_rect.center)
         self.surface.blit(xp_text, xp_rect)
 
-        life_text = self.font.render('Life',False, s.font_color)
+        life_text = self.font.render('Life', False, s.font_color)
         life_rect = life_text.get_rect(center=self.life_bar_rect.center)
         self.surface.blit(life_text, life_rect)
 
@@ -50,3 +50,16 @@ class UI:
         self.draw_background()
         self.draw_stats()
         self.draw_text()
+    
+
+    def game_over(self):
+        font1 = pygame.font.Font(s.font_location,100)
+        font2 = pygame.font.Font(s.font_location,90)
+
+        text1 = font1.render('GAME OVER', False, s.empty_bar_color)
+        rect1 = text1.get_rect(center=(s.width/2, s.height/2))
+        self.surface.blit(text1,rect1)
+
+        text2 = font2.render('GAME OVER', False, s.font_color)
+        rect2 = text2.get_rect(center=(s.width/2, s.height/2))
+        self.surface.blit(text2,rect2)

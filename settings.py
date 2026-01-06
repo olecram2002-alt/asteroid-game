@@ -4,6 +4,8 @@ fps = 60
 scale_factor = 1
 efex_volume = 0.3
 music_volume = 0.1
+game_over = False
+menu = False
 
 #ui helpers
 empty_bar_color = '#1e3a29'
@@ -18,7 +20,7 @@ G = 4
 asteroid_spawn_time = 2*1000
 angle_spawn_range = randint(35,45)
 speed_magnitud = randint(4,6)
-asteroids_list =['a-small', 'a-medium', 'a-large', 'a-xlarge']
+asteroids_list = ['a-small', 'a-medium', 'a-large', 'a-xlarge']
 
 asteroid_atributes = {'a-small':(100,10,10),      # mass, life, xp
                       'a-medium':(500,30,20),

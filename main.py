@@ -19,6 +19,8 @@ class Game:
         
         self.screen = pygame.display.set_mode((s.width,s.height), flags)
         pygame.display.set_caption('Asteroids')
+        icon = pygame.image.load('sprites/spaceship-1.png').convert_alpha()
+        pygame.display.set_icon(icon)
         self.clock = pygame.time.Clock()
         pygame.mixer.music.load('sounds/music/Cranky-2D-Creatures.ogg')
         pygame.mixer.music.play(-1)
@@ -48,8 +50,12 @@ class Game:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
+                        if s.menu == True:
+                            pygame.mixer.music.play(-1, fade_ms=1000)
+                            s.menu = False
+                        else:
+                            pygame.quit()
+                            sys.exit()
 
             self.update()
             self.draw()
@@ -59,23 +65,34 @@ class Game:
 
 
     def update(self):
-        self.manager.planet.update()
-        self.manager.player.update()
-        for sprite in self.manager.asteroids:
-            if sprite is self.manager.planet:
-                continue
-            sprite.update()
-        for sprite in self.manager.bullet_sprites:
-            sprite.update()
-        self.manager.collision_bullet_check()
-        self.manager.collision_planet_check()
-        self.manager.collision_asteroid_check()
+        if s.game_over == True:
+            pygame.mixer.music.fadeout(1000)
+
+        if s.menu == True:
+            pygame.mixer.music.fadeout(1000)
+
+        if s.menu == False and s.game_over == False:
+            self.manager.planet.update()
+            self.manager.player.update()
+            for sprite in self.manager.asteroids:
+                if sprite is self.manager.planet:
+                    continue
+                sprite.update()
+            for sprite in self.manager.bullet_sprites:
+                sprite.update()
+            self.manager.collision_bullet_check()
+            self.manager.collision_planet_check()
+            self.manager.collision_asteroid_check()
 
 
     def draw(self):
         self.screen.fill('black')
         self.manager.visible_sprites.draw(self.screen)
         self.manager.ui.display()
+        if s.game_over == True:
+            self.manager.ui.game_over()
+        if s.menu == True:
+            self.manager.menu.display()
         
 
 

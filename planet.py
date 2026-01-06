@@ -53,4 +53,6 @@ class Planet(pygame.sprite.Sprite):
 
     def get_hit(self):
         self.life -= 10
+        if self.life == 0:
+            s.game_over = True
 

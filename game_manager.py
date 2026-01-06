@@ -3,6 +3,7 @@ from player import Player
 from planet import Planet
 from asteroid import Asteroid
 from ui import UI
+from menu import Upgrade_Menu
 from random import randint
 
 def center_collision(sprite_a, sprite_b, type_):
@@ -41,6 +42,9 @@ class Manager:
 
         #user interface 
         self.ui = UI(self.player, self.planet)
+
+        #menu
+        self.menu = Upgrade_Menu()
 
 
     def generate_celestial_body(self):

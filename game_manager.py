@@ -79,7 +79,7 @@ class Manager:
     def get_upgrade_price(self):
         x = 1
         while True:
-            price = x
+            price = round(x*0.5)
             yield price
             x += 1
 

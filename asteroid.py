@@ -195,9 +195,11 @@ class Asteroid(Celestial_body):
 
     def calculate_drop(self, type_):
         if type_ == 'a-xlarge':
-            return 1
+            if s.atributes['luck']:
+                return 1*randint(1, s.atributes['luck']+1)
         elif type_ == 'a-large':
             if randint(0,2):
-                return 1
+                if s.atributes['luck']:
+                    return 1*randint(1, s.atributes['luck']+1)
             
         return 0
